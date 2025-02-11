@@ -15,6 +15,8 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import interestCoverImage from "@/assets/interestCoverimage2.png"
 import { useRouter } from "next/navigation"
+import Cta from "@/components/shared/home/Cta"
+import NewsLetter from "@/components/shared/home/NewsLetter"
 
 export default function Home() {
   const [page, setPage] = useState(1)
@@ -135,6 +137,8 @@ export default function Home() {
         </div>
       </div>
       <OragnizerRow />
+      <Cta/>
+      <NewsLetter/>
     </main>
   )
 }

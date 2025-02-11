@@ -11,4 +11,5 @@ urlpatterns = [
     path("delete/<id>/",view.DeleteEventApiView.as_view()),
     path("update/<id>/",view.EditEventAPIView.as_view()),
     path("favorite/<id>/",view.AddOrRemoveEventFavoriteAPIView.as_view()),
+    path("relatedEvents/<id>/",view.RelatedEventAPIView.as_view())
 ]

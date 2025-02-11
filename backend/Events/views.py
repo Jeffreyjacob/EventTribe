@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from Events import serializers as api_serializer
 from rest_framework import status
-from rest_framework.generics import GenericAPIView,ListAPIView,DestroyAPIView
+from rest_framework.generics import GenericAPIView,ListAPIView,DestroyAPIView,RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from .permissions import isUserOrganizer
@@ -157,3 +157,28 @@ class SearchEventAPIView(ListAPIView):
      filterset_class = EventFilter
      pagination_class = EventPagination
      
+
+class RelatedEventAPIView(RetrieveAPIView):
+    permission_classes = [AllowAny]
+    queryset = Event.objects.all()
+    lookup_field = "id"
+    
+    
+    def get_object(self):
+         return Event.objects.get(id=self.kwargs['id'])
+     
+    def get(self, request, *args, **kwargs):
+         event = self.get_object()
+         relatedEvents = Event.objects.filter(
+             category = event.category
+         ).exclude(id=event.id)
+         serializer = api_serializer.EventSerializer(relatedEvents,many=True)
+         return Response(serializer.data,status=status.HTTP_200_OK)
+     
+     
+    
+    
+            
+            
+            
+        

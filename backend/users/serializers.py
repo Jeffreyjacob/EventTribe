@@ -225,7 +225,6 @@ class LogoutSerializer(serializers.Serializer):
             
 class OrganizerSerializer(serializers.ModelSerializer):
       user = UserSerializer()
-      followers = UserSerializer(many=True)
       class Meta:
           model = Organizer
           fields = [

@@ -1,4 +1,4 @@
-import { OrganizerType, UserType } from "@/lib/type";
+import { OrganizerDetailType, OrganizerType, UserType } from "@/lib/type";
 import { apiSlice } from "@/services/apiservices";
 import { eventApiSlice } from "./eventApislice";
 
@@ -116,7 +116,7 @@ const authApiSlice = apiSlice.injectEndpoints({
                     ])
                  )
                }catch(error){
-                console.error('Error during addFavorite mutation', error);
+                console.error('Error during addInterest mutation', error);
                }
            }
         }),
@@ -141,16 +141,42 @@ const authApiSlice = apiSlice.injectEndpoints({
         }),
         getOrganizerlist: builder.query<OrganizerListRespoonse,void>({
             query:()=>({
-                url:'/user/organizer',
+                url:'/user/organizer/',
                 method:"GET"
-            })
+            }),
+            providesTags:(result:any,error:any)=>[
+                {type:'OrganizerList'}
+            ],
+            keepUnusedDataFor: 0
         }),
-        followOrganizer: builder.mutation<{message:string},{id:string}>({
+        followOrganizer: builder.mutation<{message:string},{id:number | undefined}>({
               query:({id})=>({
-                 url:"/user/follow/",
-                 method:"PATCH",
-                 params: {id}
-              })
+                 url:`/user/follow/${id}/`,
+                 method:"POST"
+              }),
+              onQueryStarted:async (args,{dispatch,queryFulfilled})=>{
+                try{
+                  await queryFulfilled
+                  dispatch(
+                     authApiSlice.util.invalidateTags([
+                        {type:'OrganizerList'},
+                        {type:'OrganizerDetail'}
+                     ])
+                  )
+                }catch(error){
+                    console.error('Error during addFavorite mutation', error);
+                }
+              }
+        }),
+        OrganizerDetail: builder.query<OrganizerDetailType,{id:number}>({
+            query: ({id})=>({
+                url:`/user/organizer/${id}/`,
+                method:"GET"
+            }),
+            providesTags:(result:any,error:any)=>[
+                {type:'OrganizerDetail'}
+            ],
+            keepUnusedDataFor: 0
         })
     })
 })
@@ -168,4 +194,5 @@ export const {
    useUpdateInterestMutation,
    useGetOrganizerlistQuery,
    useFollowOrganizerMutation,
+   useOrganizerDetailQuery
 } = authApiSlice

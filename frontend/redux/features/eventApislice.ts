@@ -47,6 +47,18 @@ export const eventApiSlice = apiSlice.injectEndpoints({
                 {type:'interestedEvent'}
             ],
             keepUnusedDataFor: 0
+        }),
+        eventDetails:builder.query<EventType,{id:string}>({
+            query:({id})=>({
+                url:`/event/${id}/`,
+                method:"GET"
+            })
+        }),
+        relatedevents: builder.query<EventType[],{id:string}>({
+            query:({id})=>({
+                url:`/event/relatedEvents/${id}`,
+                method:"GET"
+            })
         })
     })
 })
@@ -55,5 +67,7 @@ export const eventApiSlice = apiSlice.injectEndpoints({
 export const {
    useAlleventsQuery,
    useAddFavoriteEventMutation,
-   useInterestedEventQuery
+   useInterestedEventQuery,
+   useEventDetailsQuery,
+   useRelatedeventsQuery
 } = eventApiSlice

@@ -178,14 +178,14 @@ class  GetOrganizerListAPIView(ListAPIView):
        
           
 class GetOrganizerDetailAPIView(GenericAPIView):
-       permission_classes = [IsAuthenticated,IsUserOrganizer]
+       permission_classes = [AllowAny]
        serializer_class = api_serializer.OrganizerSerializer
        
        def get(self,request,organizerId):
            try:
                user = User.objects.get(id=organizerId)
                organizer = Organizer.objects.get(user=user)
-               events = Event.objects.filter(organizer=organizer)
+               events = Event.objects.filter(organizer=user)
                
                organizerserializer = self.serializer_class(organizer)
                eventserializer = EventSerializer(events,many=True)

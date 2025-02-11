@@ -22,7 +22,7 @@ export type UserType = {
 
 export const NavLink = [
     { name: "Home", href: '/' },
-    { name: "Events", href: '/events' },
+    { name: "Events", href: '/eventListing' },
     { name: "About", href: '/about' },
     { name: "Contact", href: '/contact' }
 ]
@@ -195,6 +195,7 @@ export const ExploreCategoriesData = [
 export type EventType = {
         id:string
         title:string
+        organizer:number
         description:string
         start_date:string
         end_date:string,
@@ -216,4 +217,17 @@ export type OrganizerType = {
       role:string
       },
     followers:number[]
+}
+
+export type OrganizerDetailType = {
+    organizer: {
+      user:{
+        id:number,
+        email:string,
+        full_name:string,
+        role:string
+        },
+      followers:number[]
+    }
+    events:EventType[]
 }
