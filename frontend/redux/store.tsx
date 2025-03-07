@@ -9,11 +9,15 @@ import dynamic from 'next/dynamic';
 import userReducer from './features/userSlice';
 import React from "react";
 import { apiSlice } from "@/services/apiservices";
+import { locationSlice } from "@/services/apilocationservice";
+import checkoutReducer from "./features/checkoutSlice"
 
 
 const rootReducer = combineReducers({
     [apiSlice.reducerPath]:apiSlice.reducer,
-    user: userReducer
+    [locationSlice.reducerPath]:locationSlice.reducer,
+    user: userReducer,
+    checkout:checkoutReducer,
 })
 
 
@@ -29,7 +33,8 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
         reducer: persistedReducer,
         middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware({ serializableCheck: false }).concat(apiSlice.middleware),
+            getDefaultMiddleware({ serializableCheck: false }).concat(apiSlice.middleware)
+        .concat(locationSlice.middleware),
 })
 
 

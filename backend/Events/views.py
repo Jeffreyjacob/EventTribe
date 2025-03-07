@@ -10,7 +10,7 @@ from Events.models import Event
 import cloudinary
 import cloudinary.uploader
 from django_filters .rest_framework import DjangoFilterBackend
-from .filters import EventFilter
+from .filters import EventFilter,OrganizerEventFilter
 from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
@@ -104,6 +104,9 @@ class OrganizerEventAPIView(ListAPIView):
        serializer_class = api_serializer.EventSerializer
        permission_classes = [IsAuthenticated,isUserOrganizer]
        queryset = Event.objects.select_related("organizer").all()
+       pagination_class = EventPagination
+       filter_backends = (DjangoFilterBackend,)
+       filterset_class = OrganizerEventFilter
        
        def get_queryset(self):
             return Event.objects.filter(organizer=self.request.user)

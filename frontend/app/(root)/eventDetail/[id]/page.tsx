@@ -1,9 +1,9 @@
 "use client"
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { useAddFavoriteEventMutation, useEventDetailsQuery, useRelatedeventsQuery } from '@/redux/features/eventApislice'
-import { useAppSelector } from '@/redux/store'
+import { useAppDispatch, useAppSelector } from '@/redux/store'
 import Image from 'next/image'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 import { StarIcon as SolidStar, TicketIcon } from "@heroicons/react/24/solid"
 import { StarIcon as OutlineStar } from "@heroicons/react/24/outline"
@@ -16,6 +16,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import Event from '@/components/shared/Event/Event'
 import { toast } from 'sonner'
+import { setEvent } from '@/redux/features/checkoutSlice'
 
 const Page = () => {
   const { id } = useParams()
@@ -23,6 +24,9 @@ const Page = () => {
   const { data: RelatedEvent, isLoading: RelatedEventLoading, refetch: RelatedEventRefetch } = useRelatedeventsQuery({ id: id as string }, {
     skip: !id
   })
+  const pathName = usePathname()
+  const router = useRouter()
+  const dispatch = useAppDispatch()
   const [AddFavorite] = useAddFavoriteEventMutation()
   const { userInfo, isAuthenticated } = useAppSelector((state) => state.user)
   const isDifferentMonth = (startDate: string, endDate: string) => {
@@ -43,6 +47,17 @@ const Page = () => {
       const errorMessage = error?.data?.message || 'Something went wrong. Please try again.';
     }
   }
+  const handleBuyTicket = ()=>{
+     if(isAuthenticated){
+       if (data){
+        dispatch(setEvent({event:data}))
+       }
+       router.push("/checkout")
+     }else{
+       router.push(`/login?redirect=${pathName}`) 
+     }
+  }
+  console.log(data)
   return (
     <div>
       {
@@ -120,7 +135,8 @@ const Page = () => {
                 </p>
               </div>
               <div className='w-[50%] md:w-[20%] flex flex-col'>
-                <Button className='w-fit bg-backgroundYellow hover:bg-backgroundYellow/80 text-[#2B293D] text-[16px] md:text-[18px] mb-2 '>
+                <Button className='w-fit bg-backgroundYellow hover:bg-backgroundYellow/80 text-[#2B293D] text-[16px] md:text-[18px] mb-2 ' onClick={handleBuyTicket}
+                  disabled={data?.organizer == userInfo?.id}>
                   <TicketIcon className=' size-5 text-[#2B293D]' />
                   Buy Ticket
                 </Button>

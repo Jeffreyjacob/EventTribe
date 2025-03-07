@@ -12,7 +12,7 @@ const Cta = () => {
     const router = useRouter()
     const handleCreateEvent = ()=>{
         if (userInfo?.role === "Organizer") {
-            router.push("/createEvent")
+            router.push("organizerDashboard/create")
         } else {
             toast.warning("You must sign up as an Organizer to create an event.")
         }

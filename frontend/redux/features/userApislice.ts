@@ -1,4 +1,4 @@
-import { OrganizerDetailType, OrganizerType, UserType } from "@/lib/type";
+import { CardType, OrganizerDetailType, OrganizerType, UserType } from "@/lib/type";
 import { apiSlice } from "@/services/apiservices";
 import { eventApiSlice } from "./eventApislice";
 
@@ -94,7 +94,6 @@ const authApiSlice = apiSlice.injectEndpoints({
             providesTags:(result:any,error:any)=>[
                 {type:'UserProfileInfo'}
             ],
-            keepUnusedDataFor: 0
         }),
         updateInterest: builder.mutation<{message:string,data:string[]},{interest:string[]}>({
            query: ({interest})=>({
@@ -177,6 +176,36 @@ const authApiSlice = apiSlice.injectEndpoints({
                 {type:'OrganizerDetail'}
             ],
             keepUnusedDataFor: 0
+        }),
+        addCard: builder.mutation<void,{token:string}>({
+             query:({token})=>({
+                 url:"/user/creditcard/create/",
+                 method:"POST",
+                 body: {stripe_token:token}
+             })
+        }),
+        getCardList: builder.query<CardType[],void>({
+            query:()=>({
+                url:"/user/creditcard/",
+                method:"GET"
+            }),
+           providesTags:(result:any,error:any)=>[
+             {type:"CardsList"}
+           ],
+           keepUnusedDataFor: 0
+        }),
+        setDefaultCard: builder.mutation<void,{id:number}>({
+           query:({id})=>({
+              url:`/user/creditcard/setdefault/${id}/`,
+              method:"PATCH"
+           }),
+           
+        }),
+        deleteCard: builder.mutation<void,{id:number}>({
+            query:({id})=>({
+                url:`/user/creditcard/delete/${id}/`,
+                method:"DELETE"
+            })
         })
     })
 })
@@ -194,5 +223,9 @@ export const {
    useUpdateInterestMutation,
    useGetOrganizerlistQuery,
    useFollowOrganizerMutation,
-   useOrganizerDetailQuery
+   useOrganizerDetailQuery,
+   useAddCardMutation,
+   useGetCardListQuery,
+   useSetDefaultCardMutation,
+   useDeleteCardMutation
 } = authApiSlice

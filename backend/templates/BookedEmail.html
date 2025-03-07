@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Ticket Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            background: #007bff;
+            color: #ffffff;
+            padding: 15px;
+            font-size: 22px;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            padding: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+        .event-details {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+        .button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            🎟 Your Ticket is Confirmed!
+        </div>
+        <div class="content">
+            <p>Dear <strong>{{username}}</strong>,</p>
+            <p>🎉 Congratulations! Your booking for <strong>{{event_title}}</strong> has been successfully confirmed.</p>
+            
+            <div class="event-details">
+                <p>📅 <strong>Event Date:</strong>{{event_date}}</p>
+                <p>📍 <strong>Location:</strong>{{event_location}}</p>
+                <p>🎟 <strong>Quantity:</strong>{{event_quantity}}</p>
+            </div>
+
+            <p>Your ticket is attached to this email. Please present it at the entrance for verification.</p>
+             
+            <div style="text-align: center; margin-top: 20px;">
+                <img src="{{ ticket_img }}" alt="Your Event Ticket" style="max-width: 100%; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <p>We look forward to seeing you at the event! Enjoy the experience! 🎶</p>
+        </div>
+
+        <div class="footer">
+            Best regards, <br>
+            <strong>EventTribe Team</strong>
+        </div>
+    </div>
+</body>
+</html>

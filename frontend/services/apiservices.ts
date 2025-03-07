@@ -23,7 +23,7 @@ const baseQuery = fetchBaseQuery({
 
         if(token && endpoint !== "login" && endpoint !== "signup" 
             && endpoint !== "verifyEmail" && endpoint !== "resendEmail" && endpoint !== "eventDetails"
-            && endpoint !== "sendPasswordResetEmail" && endpoint !== "setNewPassword"  ){
+            && endpoint !== "sendPasswordResetEmail" && endpoint !== "setNewPassword" && endpoint !== "SearchEvents"  ){
             headers.set('Authorization', `Bearer ${token}`);
         }
      return headers
@@ -79,6 +79,8 @@ FetchBaseQueryError
 export const apiSlice = createApi({
     reducerPath:'api',
     baseQuery:baseQueryWithReauth,
-    tagTypes:['events','interestedEvent','UserProfileInfo','OrganizerList','OrganizerDetail'],
+    tagTypes:['events','interestedEvent','UserProfileInfo',
+        'OrganizerList','OrganizerDetail','SearchEvents',
+        "OrganizerEvents","RelatedEvents","CardsList"],
     endpoints:builder => ({})
 })

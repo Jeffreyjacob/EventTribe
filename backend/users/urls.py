@@ -15,6 +15,10 @@ urlpatterns = [
     path('organizer/',api_views.GetOrganizerListAPIView.as_view()),
     path('logout/',api_views.LogoutAPIView.as_view()),
     path("updateInterest/",api_views.UpdateUserInterestAPIView.as_view()),
+    path("creditcard/create/",api_views.AddCreditCardView.as_view()),
+    path("creditcard/",api_views.ListCreditCardView.as_view()),
+    path("creditcard/setdefault/<card_id>/",api_views.SetDefaultCreditCardView.as_view()),
+    path("creditcard/delete/<card_id>/",api_views.DeleteCreditCardView.as_view()),
     path("follow/<organizerId>/",api_views.UserFollowOrganizer.as_view()),
     path("organizer/<organizerId>/",api_views.GetOrganizerDetailAPIView.as_view())
 ]

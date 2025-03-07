@@ -97,6 +97,6 @@ class  EventSerializer(serializers.ModelSerializer):
                'capacity',
                'image',
                'favorited',
-               'attendees'
+               'attendees',
            ]
            

@@ -9,7 +9,7 @@ import { finishInitialLoad, setAuth } from '@/redux/features/userSlice'
 import { useAppDispatch } from '@/redux/store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -24,6 +24,8 @@ const Page = () => {
     const [passwordVisibity, setPasswordVisibity] = useState(true)
     const router = useRouter()
     const dispatch = useAppDispatch()
+    const searchParams = useSearchParams()
+    const redirctLink = searchParams.get('redirect') || "/"
     const [Login,{isLoading}] = useLoginMutation()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -54,7 +56,7 @@ const Page = () => {
             }))
             dispatch(finishInitialLoad())
             if(response.is_verified){
-             router.push("/")
+             router.push(redirctLink)
             }else{
               router.push(`/verifyEmail?email=${response.email}`)
             }

@@ -36,7 +36,7 @@ const HostCard: React.FC<HostCardProps> = ({
             const errorMessage = error?.data?.message || 'Something went wrong. Please try again.';
         }
     }
-    console.log(data)
+
     return (
         <>
             {

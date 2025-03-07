@@ -65,12 +65,12 @@ const ToggleMenu = () => {
                                   Account
                                 </Link>
                                 {
-                                    userInfo?.role == "Organizer" && <Link href={"/dashboard"}
-                                    className='hover:text-backgroundNavyBlue capitalize'>
+                                    userInfo?.role == "Organizer" && <Link href={"/organizerDashboard"}
+                                    className='hover:text-backgroundNavyBlue capitalize' onClick={onHandleClose}>
                                       Organizer Dashboard
                                     </Link>
                                 }
-                               <Link href={"/bookedEvents"} className='hover:text-backgroundNavyBlue capitalize' onClick={onHandleClose}>
+                               <Link href={"/bookedEvent"} className='hover:text-backgroundNavyBlue capitalize' onClick={onHandleClose}>
                                   Booked Events
                                 </Link>
                                 <Link href={"/favorite"} className='hover:text-backgroundNavyBlue capitalize' onClick={onHandleClose}>
@@ -84,7 +84,7 @@ const ToggleMenu = () => {
                         }
                         {
                          NavLink.map((link,index)=>(
-                            <Link href={link.href} key={index} className='hover:text-backgroundNavyBlue capitalize'>
+                            <Link href={link.href} key={index} onClick={onHandleClose} className='hover:text-backgroundNavyBlue capitalize'>
                                 {link.name}
                             </Link>
                          ))

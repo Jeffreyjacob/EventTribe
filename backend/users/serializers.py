@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User,Profile,Organizer
+from .models import User,Profile,Organizer,CreditCard
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from .utils import send_reset_pasword_email_task,generate_url
@@ -231,4 +231,11 @@ class OrganizerSerializer(serializers.ModelSerializer):
               'user',
               'followers',
           ]
-      
+
+class CreditCardSerializer(serializers.ModelSerializer):
+     class Meta:
+         model = CreditCard
+         fields = ['id','last4','brand','exp_month', 'exp_year','is_default']
+         
+         
+ 

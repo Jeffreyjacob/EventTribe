@@ -125,6 +125,32 @@ class Organizer(models.Model):
      
      def __str__(self):
           return f"{self.user.email} organizer"
+      
+
+class CreditCard(models.Model):
+      
+      user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="creditcard")
+      stripe_customer_id = models.CharField(max_length=255)
+      stripe_payment_method = models.CharField(max_length=255,unique=True)
+      last4 = models.CharField(max_length=4)
+      exp_month = models.IntegerField()
+      exp_year = models.IntegerField()
+      brand = models.CharField(max_length=50)
+      created_at = models.DateTimeField(auto_now_add=True)
+      is_default = models.BooleanField(default=False)
+      
+      def __str__(self):
+           return f"{self.user.email} - {self.brand} **** {self.last4}"
+       
+      def save(self,*args,**kwargs):
+          if self.is_default:
+              CreditCard.objects.filter(user=self.user,is_default=True).update(is_default=False)
+          super().save(*args,**kwargs)
+          
+
+
+
+
      
         
 

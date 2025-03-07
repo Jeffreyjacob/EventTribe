@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'users',
     'corsheaders',
     'Events',
-    'Notifications'
+    'Notifications',
+    "Bookings"
 ]
 
 MIDDLEWARE = [
@@ -145,12 +146,14 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000').split(',')
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
+    'aa40-41-217-57-16.ngrok-free.app' 
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://aa40-41-217-57-16.ngrok-free.app'
 ]
 
 CELERY_BROKER_URL = config('CELERY_BROKER_URL','redis://redis:6379/0')
@@ -206,3 +209,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 
 }
+
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
+STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET')

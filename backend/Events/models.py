@@ -10,7 +10,10 @@ class EventTypeOption(models.TextChoices):
           Paid = "Paid"
       
 class EventCategoryOption(models.TextChoices):
-          
+          Concerts = "Concerts" 
+          Music_Festivals = "Music Festivals" 
+          Music_Workshops = "Music Workshops" 
+          Dj_Nights = "Dj Nights" 
           Art_Exhibitions = "Art Exhibitions"
           Cultural_Festivals = "Cultural Festivals"
           Theater_Plays = "Theater Plays"

@@ -1,19 +1,22 @@
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
+import stripe.error
 from users import serializers as api_serializer
 from .utils import send_email_verification_code_task
-from .models import EmailVerification,User,Profile,Organizer
+from .models import EmailVerification,User,Profile,Organizer,CreditCard
 from rest_framework.generics import GenericAPIView,ListAPIView,UpdateAPIView
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.utils.timezone import now,timedelta
-from .permissions import IsUserOwnProfile,IsUserOrganizer
+from .permissions import IsUserOwnProfile
 from Events.models import Event
 from Events.serializers import EventSerializer
 from rest_framework.pagination import PageNumberPagination
+import stripe
+from django.conf import settings
+
 
 # Create your views here.
-
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class RegisterAPIView(GenericAPIView):
     serializer_class = api_serializer.RegisterUserSerializer
@@ -210,4 +213,105 @@ class LogoutAPIView(GenericAPIView):
           return Response({"message":"User logged out"},status=status.HTTP_204_NO_CONTENT)
            
               
-              
+class AddCreditCardView(GenericAPIView):
+    
+    permission_classes = [IsAuthenticated]
+    
+    
+    def post(self,request,*args,**kwargs):
+        user = request.user
+        stripe_token = request.data.get("stripe_token")
+        
+        if not stripe_token:
+            return Response({"error":"Stripe token is required"})
+        
+        try:
+            latest_card = CreditCard.objects.filter(user=user).order_by("-created_at").first()
+            stripe_customer_id = latest_card.stripe_customer_id if latest_card else None
+            
+            if not stripe_customer_id:
+                customer =  stripe.Customer.create(email=user.email)
+                stripe_customer_id = customer.id
+                
+            payment_method = stripe.PaymentMethod.create(
+                type="card",
+                card={"token":stripe_token}
+            )
+            
+            stripe.PaymentMethod.attach(payment_method.id,customer=stripe_customer_id)
+            card = stripe.PaymentMethod.retrieve(payment_method.id).card
+            
+            is_first_card = CreditCard.objects.filter(user=user).count() == 0
+            
+            creditCard = CreditCard.objects.create(
+                user=user,
+                stripe_customer_id = stripe_customer_id,
+                stripe_payment_method =payment_method.id,
+                last4 = card.last4,
+                exp_month = card.exp_month,
+                exp_year = card.exp_year,
+                brand = card.brand,
+                is_default = (CreditCard.objects.filter(user=user).count() == 0)
+            )
+            if is_first_card or creditCard.is_default:
+                stripe.Customer.modify(
+                    stripe_customer_id,
+                    invoice_settings={"default_payment_method": payment_method.id}
+                )
+
+            return Response(api_serializer.CreditCardSerializer(creditCard).data,status=status.HTTP_201_CREATED)
+        except stripe.error.StripeError as e:
+            return Response({"error":str(e)},status=status.HTTP_400_BAD_REQUEST)
+       
+    
+    
+
+class ListCreditCardView(ListAPIView):
+     permission_classes = [IsAuthenticated]
+     serializer_class = api_serializer.CreditCardSerializer
+     queryset = CreditCard.objects.select_related("user").all()
+     
+     def get_queryset(self):
+          return super().get_queryset().filter(user=self.request.user)
+
+
+class SetDefaultCreditCardView(GenericAPIView):
+     permission_classes = [IsAuthenticated]
+     
+     def patch(self,request,card_id):
+         user = request.user
+         
+         try:
+           card = CreditCard.objects.get(id=card_id,user=user)
+           CreditCard.objects.filter(user=user,is_default=True).update(is_default=False)
+           card.is_default = True
+           card.save()  
+           
+           stripe.Customer.modify(
+                card.stripe_customer_id,
+                invoice_settings={"default_payment_method": card.stripe_payment_method}
+            )
+           return Response({"message":"set to default card"})
+         except CreditCard.DoesNotExist:
+             return Response({"error":"Card not found"},status=status.HTTP_400_BAD_REQUEST)
+                            
+       
+       
+class DeleteCreditCardView(GenericAPIView):
+    
+     permission_classes = [IsAuthenticated]
+     
+     def delete(self,request,card_id):
+         user = request.user
+         
+         try:
+             card = CreditCard.objects.get(id=card_id,user=user)
+             
+             if card.is_default and CreditCard.objects.filter(user=user).count > 1:
+                 return Response({"error":"Set another default card before delete"},status=status.HTTP_400_BAD_REQUEST)
+             
+             stripe.PaymentMethod.detach(card.stripe_payment_method)
+             card.delete()
+             return Response({"message":"Card deleted successfully!"})
+         except CreditCard.DoesNotExist:
+             return Response({"error":"Card not found"},status=status.HTTP_400_BAD_REQUEST)

@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/user/',include('users.urls')),
     path('api/v1/event/',include("Events.urls")),
+    path('api/v1/booking/',include("Bookings.urls"))
 ]
